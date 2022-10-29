@@ -211,10 +211,10 @@ mod tests {
     #[test]
     fn test_parse_default() {
         let config = parse(DEFAULT_CONFIG).expect("Couldn't parse config");
-        assert_eq!(config.tls, false);
-        assert_eq!(config.tor, false);
-        assert_eq!(config.wide, false);
-        assert_eq!(config.emoji, false);
+        assert!(!config.tls);
+        assert!(!config.tor);
+        assert!(!config.wide);
+        assert!(!config.emoji);
         assert_eq!(config.start, "gopher://phetch/1/home");
         assert_eq!(config.media, Some("mpv".to_string()));
     }
@@ -222,7 +222,7 @@ mod tests {
     #[test]
     fn test_bad_key() {
         let res = parse("random-key yes");
-        assert_eq!(res.is_err(), true);
+        assert!(res.is_err());
     }
 
     #[test]
@@ -234,15 +234,15 @@ mod tests {
     #[test]
     fn test_comments_ignored() {
         let cfg = parse("# wide yes\ntls yes").unwrap();
-        assert_eq!(cfg.wide, false);
-        assert_eq!(cfg.tls, true);
+        assert!(!cfg.wide);
+        assert!(cfg.tls);
     }
 
     #[test]
     fn test_yes_or_true() {
         let cfg = parse("tls yes\nwide true").unwrap();
-        assert_eq!(cfg.tls, true);
-        assert_eq!(cfg.wide, true);
+        assert!(cfg.tls);
+        assert!(cfg.wide);
     }
 
     #[test]
@@ -263,14 +263,14 @@ mod tests {
     #[test]
     fn test_no_or_false() {
         let cfg = parse("tls false\nwide no\ntor n").unwrap();
-        assert_eq!(cfg.tls, false);
-        assert_eq!(cfg.tor, false);
-        assert_eq!(cfg.wide, false);
+        assert!(!cfg.tls);
+        assert!(!cfg.tor);
+        assert!(!cfg.wide);
     }
     #[test]
     fn test_no_dupe_keys() {
         let res = parse("tls false\nwide no\nemoji yes\ntls yes");
-        assert_eq!(res.is_err(), true);
+        assert!(res.is_err());
         let e = res.unwrap_err();
         assert_eq!(format!("{}", e), "Duplicate key on line 4: tls");
     }
@@ -278,15 +278,15 @@ mod tests {
     #[test]
     fn test_encoding() {
         let cfg = parse("tls true\nwide no\nemoji yes").unwrap();
-        assert_eq!(cfg.tls, true);
+        assert!(cfg.tls);
         assert_eq!(cfg.encoding, Encoding::default());
 
         let cfg = parse("tls true\nencoding utf8\n").unwrap();
-        assert_eq!(cfg.tls, true);
+        assert!(cfg.tls);
         assert_eq!(cfg.encoding, Encoding::UTF8);
 
         let cfg = parse("tls true\nencoding CP437\n").unwrap();
-        assert_eq!(cfg.tls, true);
+        assert!(cfg.tls);
         assert_eq!(cfg.encoding, Encoding::CP437);
 
         let res = parse("tls true\nencoding what\n");

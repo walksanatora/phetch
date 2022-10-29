@@ -2,6 +2,8 @@
 //! Responds to user input by producing an Action which is then handed
 //! to the main UI to perform.
 
+#![allow(clippy::format_push_string)]
+
 use crate::{
     config::SharedConfig as Config,
     encoding::Encoding,
@@ -325,17 +327,17 @@ mod test {
         text.mode = ui::Mode::Print;
 
         let res = text.render();
-        assert!(!res.contains("╟"));
-        assert!(!res.contains("≈"));
-        assert!(!res.contains("Ω"));
-        assert!(!res.contains("Θ"));
+        assert!(!res.contains('╟'));
+        assert!(!res.contains('≈'));
+        assert!(!res.contains('Ω'));
+        assert!(!res.contains('Θ'));
 
         text.toggle_encoding();
         let res = text.render();
-        assert!(res.contains("╟"));
-        assert!(res.contains("≈"));
-        assert!(res.contains("Ω"));
-        assert!(res.contains("Θ"));
+        assert!(res.contains('╟'));
+        assert!(res.contains('≈'));
+        assert!(res.contains('Ω'));
+        assert!(res.contains('Θ'));
     }
 
     #[test]

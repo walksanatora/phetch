@@ -254,7 +254,7 @@ mod tests {
     fn test_simple() {
         let cfg = parse(&["-l"]).expect("failed to parse");
         assert_eq!(cfg.start, "gopher://127.0.0.1:7070");
-        assert_eq!(cfg.wide, false);
+        assert!(!cfg.wide);
     }
 
     #[test]
@@ -282,7 +282,7 @@ mod tests {
 
         let cfg = parse(&["-s", "-l"]).expect("should work");
         assert_eq!(cfg.start, "gopher://127.0.0.1:7070");
-        assert_eq!(cfg.tls, true);
+        assert!(cfg.tls);
     }
 
     #[test]
@@ -327,15 +327,15 @@ mod tests {
         assert_eq!(err.to_string(), "can\'t set both --tls and --no-tls");
 
         let cfg = parse(&["--tor", "--no-tls"]).expect("should work");
-        assert_eq!(cfg.tor, true);
-        assert_eq!(cfg.tls, false);
+        assert!(cfg.tor);
+        assert!(!cfg.tls);
     }
 
     #[test]
     fn test_mix_and_match() {
         let cfg = parse(&["-r", "-s", "-C"]).expect("should work");
         assert_eq!(cfg.mode, Mode::Raw);
-        assert_eq!(cfg.tls, true);
+        assert!(cfg.tls);
     }
 
     #[test]
@@ -365,6 +365,6 @@ mod tests {
         );
 
         let cfg = parse(&["-C"]).expect("should work");
-        assert_eq!(cfg.tls, false);
+        assert!(!cfg.tls);
     }
 }
