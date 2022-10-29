@@ -2,7 +2,7 @@ use std::fmt;
 
 /// Gopher types are defined according to RFC 1436.
 #[allow(missing_docs)]
-#[derive(Copy, Clone, PartialEq, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub enum Type {
     Text,       // 0 | cyan
     Menu,       // 1 | blue
@@ -24,7 +24,8 @@ pub enum Type {
     Sound,      // s | green underline
     Document,   // d | download
     Video,      // ; | green underline
-    Xml,        // x | cyan
+    Xml,        // X | cyan
+    Executable, // x | red, nonstandard in any way (I made it up)
     Calendar,   // c | download
     Mailbox,    // M | unsupported
 }
@@ -70,6 +71,7 @@ impl Type {
                 | Type::Video
                 | Type::Calendar
                 | Type::Document
+                | Type::Executable
         )
     }
 
@@ -110,7 +112,8 @@ impl Type {
             Type::Document => 'd',
             Type::Video => ';',
             Type::Calendar => 'c',
-            Type::Xml => 'x',
+            Type::Xml => 'X',
+            Type::Executable => 'x',
             Type::Mailbox => 'M',
         }
     }
@@ -139,7 +142,8 @@ impl Type {
             'd' => Type::Document,
             ';' => Type::Video,
             'c' => Type::Calendar,
-            'x' => Type::Xml,
+            'x' => Type::Executable,
+            'X' => Type::Xml,
             'M' => Type::Mailbox,
             _ => return None,
         })
