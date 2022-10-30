@@ -473,7 +473,7 @@ mod tests {
         assert_eq!(url.sel, "/developer/sitemap.xml");
 
         let url = parse_next_url!();
-        assert_eq!(url.typ, Type::Calendar);
+        assert_eq!(url.typ, Type::Command);
         assert_eq!(url.host, "mtv.com");
         assert_eq!(url.port, "70");
         assert_eq!(url.sel, "/kriss-kross/tour-dates.ical");

@@ -203,6 +203,8 @@ impl UI {
 
         // binary downloads
         let typ = gopher::type_for_url(url);
+        let purl = gopher::parse_url(url);
+
 
         if typ.is_media() && self.config.read().unwrap().media.is_some() {
             self.dirty = true;
@@ -215,27 +217,39 @@ impl UI {
 
         if typ.is_download() {
             self.dirty = true;
-            if typ == Type::Executable {
-                return if self.confirm(&format!("WARNING! Execute {}?",url)) {
-                    if let Ok(path) = self.download(url) {
-                        let res = utils::run_external(path.as_ref());
-                        drop(std::fs::remove_file(path));
-                        res
+            match typ {
+                Type::Executable => {
+                    return if self.confirm(&format!("WARNING! Execute {}?",url)) {
+                        if let Ok(path) = self.download(url) {
+                            let res = utils::run_external(path.as_ref());
+                            drop(std::fs::remove_file(path));
+                            res
+                        } else {
+                            self.set_status("Download Failed");
+                            Ok(())
+                            }
                     } else {
-                        self.set_status("Download Failed");
+                        self.set_status("Aborted");
                         Ok(())
                     }
-                } else {
-                    self.set_status("Aborted");
-                    Ok(())
+                }
+                Type::Command => {
+                    return if self.confirm(&format!("WARNING! Run: {}?",purl.sel)) {
+                        utils::shell(purl.sel)
+                    } else {
+                        self.set_status("Aborted");
+                        Ok(())
+                    }
+                }
+            _ => {
+                return if self.confirm(&format!("Download {}?", url)) {
+                        drop(self.download(url));
+                        Ok(())
+                    } else {
+                        Ok(())
+                    };
                 }
             }
-            return if self.confirm(&format!("Download {}?", url)) {
-                drop(self.download(url));
-                Ok(())
-            } else {
-                Ok(())
-            };
         }
 
         self.load(title, url).map(|view| {

@@ -26,7 +26,7 @@ pub enum Type {
     Video,      // ; | green underline
     Xml,        // X | cyan
     Executable, // x | red, nonstandard in any way (I made it up)
-    Calendar,   // c | download
+    Command,   // c | download
     Mailbox,    // M | unsupported
 }
 
@@ -69,7 +69,7 @@ impl Type {
                 | Type::PNG
                 | Type::Sound
                 | Type::Video
-                | Type::Calendar
+                | Type::Command
                 | Type::Document
                 | Type::Executable
         )
@@ -111,7 +111,7 @@ impl Type {
             Type::Sound => 's',
             Type::Document => 'd',
             Type::Video => ';',
-            Type::Calendar => 'c',
+            Type::Command => 'c',
             Type::Xml => 'X',
             Type::Executable => 'x',
             Type::Mailbox => 'M',
@@ -141,7 +141,7 @@ impl Type {
             's' => Type::Sound,
             'd' => Type::Document,
             ';' => Type::Video,
-            'c' => Type::Calendar,
+            'c' => Type::Command,
             'x' => Type::Executable,
             'X' => Type::Xml,
             'M' => Type::Mailbox,

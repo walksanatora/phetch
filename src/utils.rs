@@ -97,6 +97,14 @@ pub fn open_external(url: &str) -> Result<()> {
     }
 }
 
+/// Run a command and return its output.
+pub fn shell(command: &str) -> Result<()> {
+    std::process::Command::new("sh")
+    .args(vec!["-c",command])
+    .output()?;
+    Ok(())
+}
+
 /// Used to execute a program that was downloaded
 /// Runs the program
 pub fn run_external(dir: &str) -> Result<()> {
