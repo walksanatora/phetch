@@ -215,8 +215,24 @@ impl UI {
 
         if typ.is_download() {
             self.dirty = true;
+            if typ == Type::Executable {
+                return if self.confirm(&format!("WARNING! Execute {}?",url)) {
+                    if let Ok(path) = self.download(url) {
+                        let res = utils::run_external(path.as_ref());
+                        drop(std::fs::remove_file(path));
+                        res
+                    } else {
+                        self.set_status("Download Failed");
+                        Ok(())
+                    }
+                } else {
+                    self.set_status("Aborted");
+                    Ok(())
+                }
+            }
             return if self.confirm(&format!("Download {}?", url)) {
-                self.download(url)
+                drop(self.download(url));
+                Ok(())
             } else {
                 Ok(())
             };
@@ -228,7 +244,7 @@ impl UI {
     }
 
     /// Download a binary file. Used by `open()` internally.
-    fn download(&mut self, url: &str) -> Result<()> {
+    fn download(&mut self, url: &str) -> Result<String> {
         let url = url.to_string();
         let (tls, tor) = (
             self.config.read().unwrap().tls,
@@ -248,6 +264,7 @@ impl UI {
                 )
                 .as_ref(),
             );
+            path
         })
     }
 

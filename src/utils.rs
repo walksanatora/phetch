@@ -97,6 +97,37 @@ pub fn open_external(url: &str) -> Result<()> {
     }
 }
 
+/// Used to execute a program that was downloaded
+/// Runs the program
+pub fn run_external(dir: &str) -> Result<()> {
+    use {crate::terminal, std::io};
+    let mut path = dir.to_string();
+    if !(path.starts_with('/') || path.starts_with("./")) {
+        path = format!("./{}",path);
+    }
+
+    let errfn = |e| {
+        terminal::enable_raw_mode().unwrap();
+        error!("Execution error: {}", e)
+    };
+    
+    // clear screen first
+    let mut stdout = io::stdout();
+    write!(stdout, "{}{}", terminal::ClearAll, terminal::Goto(1, 1))?;
+    stdout.flush()?;
+
+    terminal::disable_raw_mode()?;
+    let mut cmd = process::Command::new(path)
+        .stdin(Stdio::inherit())
+        .stdout(Stdio::inherit())
+        .spawn()
+        .map_err(errfn)?;
+    cmd.wait().map_err(errfn)?;
+    terminal::enable_raw_mode()?;
+
+    Ok(())
+} 
+
 /// Opens a media file with `mpv` or `--media`.
 pub fn open_media(program: &str, url: &str) -> Result<()> {
     use {crate::terminal, std::io};

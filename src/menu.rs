@@ -388,8 +388,13 @@ impl Menu {
                 out.push_str(color!(Underline));
                 out.push_str(color!(Green));
             } else if line.typ.is_download() {
-                out.push_str(color!(Underline));
-                out.push_str(color!(White));
+                if line.typ == Type::Executable {
+                    out.push_str(color!(Bold));
+                    out.push_str(color!(Red))
+                } else {
+                    out.push_str(color!(Underline));
+                    out.push_str(color!(White));
+                }
             } else if !line.typ.is_supported() {
                 out.push_str(color!(WhiteBG));
                 out.push_str(color!(Red));
