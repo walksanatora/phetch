@@ -99,9 +99,26 @@ pub fn open_external(url: &str) -> Result<()> {
 
 /// Run a command and return its output.
 pub fn shell(command: &str) -> Result<()> {
-    std::process::Command::new("sh")
-    .args(vec!["-c",command])
-    .output()?;
+    use {crate::terminal, std::io};
+    let errfn = |e| {
+        terminal::enable_raw_mode().unwrap();
+        error!("Execution error: {}", e)
+    };
+    
+    // clear screen first
+    let mut stdout = io::stdout();
+    write!(stdout, "{}{}", terminal::ClearAll, terminal::Goto(1, 1))?;
+    stdout.flush()?;
+
+    terminal::disable_raw_mode()?;
+    let mut cmd = process::Command::new("sh")
+        .args(vec!["-c",command])
+        .stdin(Stdio::inherit())
+        .stdout(Stdio::inherit())
+        .spawn()
+        .map_err(errfn)?;
+    cmd.wait().map_err(errfn)?;
+    terminal::enable_raw_mode()?;
     Ok(())
 }
 

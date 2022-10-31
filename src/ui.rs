@@ -235,6 +235,7 @@ impl UI {
                 }
                 Type::Command => {
                     return if self.confirm(&format!("WARNING! Run: {}?",purl.sel)) {
+                        self.set_status(format!("Running: {}",purl.sel).as_ref());
                         utils::shell(purl.sel)
                     } else {
                         self.set_status("Aborted");

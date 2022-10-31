@@ -388,7 +388,7 @@ impl Menu {
                 out.push_str(color!(Underline));
                 out.push_str(color!(Green));
             } else if line.typ.is_download() {
-                if line.typ == Type::Executable {
+                if matches!(line.typ, Type::Executable | Type::Command) {
                     out.push_str(color!(Bold));
                     out.push_str(color!(Red))
                 } else {
