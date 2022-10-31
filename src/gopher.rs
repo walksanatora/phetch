@@ -165,7 +165,6 @@ pub fn download_url(
 /// Will attempt a TLS connection first, then retry a regular
 /// connection if it fails.
 pub fn request(host: &str, port: &str, selector: &str, tls: bool, tor: bool) -> Result<Stream> {
-    let selector = selector.replace('?', "\t"); // search queries
     let addr = format!("{}:{}", host, port);
 
     // attempt tls connection
